@@ -1,0 +1,5 @@
+{
+  "name": "URL Uploader for Telegram",
+  "description": "A Telegram Mini App to upload a URL to a bot. The app captures a URL from the user, sends it to a backend service, which then processes it and can send a confirmation back to the user via the bot.",
+  "requestFramePermissions": []
+}
