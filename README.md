@@ -246,4 +246,4 @@ const BACKEND_URL = 'httpss://my-telegram-url-bot.onrender.com/upload-url'; // <
 3.  Go to **Bot Settings** -> **Menu Button**.
 4.  Configure the menu button to open your Mini App URL (the URL where you host this React frontend).
 5.  The Mini App will now be launchable from the menu button in your bot's chat.
-```"# miniapp-frontend-test" 
+```

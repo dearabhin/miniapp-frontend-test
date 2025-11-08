@@ -1,12 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>URL Uploader Mini App</title>
-    <script src="httpss://cdn.tailwindcss.com"></script>
-    <script src="httpss://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
       /* Apply Telegram theme variables for a native look and feel */
       body {
@@ -21,12 +20,18 @@
   <script type="importmap">
 {
   "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "@tonconnect/ui-react": "https://esm.sh/@tonconnect/ui-react@2.0.5",
+    "@ton/ton": "https://esm.sh/@ton/ton@13.11.2",
+    "@ton/crypto": "https://esm.sh/@ton/crypto@3.2.0",
+    "buffer": "https://esm.sh/buffer@6.0.3",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
   }
 }
 </script>
+<link rel="stylesheet" href="https://esm.sh/@tonconnect/ui-react@2.0.5/dist/style.css" />
 <link rel="stylesheet" href="/index.css">
 </head>
   <body>

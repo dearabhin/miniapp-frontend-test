@@ -10,6 +10,10 @@
   },
   "dependencies": {
     "react": "^19.2.0",
+    "@tonconnect/ui-react": "2.0.5",
+    "@ton/ton": "13.11.2",
+    "@ton/crypto": "3.2.0",
+    "buffer": "6.0.3",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {

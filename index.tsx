@@ -2,6 +2,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { TonConnectUIProvider } from '@tonconnect/ui-react';
+import { Buffer } from 'buffer';
+
+// Fix: Augment the Window interface to include the 'Buffer' property.
+declare global {
+  interface Window {
+    Buffer: typeof Buffer;
+  }
+}
+
+// Polyfill Buffer for TON SDK
+window.Buffer = Buffer;
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -9,8 +21,14 @@ if (!rootElement) {
 }
 
 const root = ReactDOM.createRoot(rootElement);
+
+// Use a public manifest from the reactjs-template as a placeholder
+const manifestUrl = 'https://raw.githubusercontent.com/Telegram-Mini-Apps/reactjs-template/main/public/tonconnect-manifest.json';
+
 root.render(
   <React.StrictMode>
-    <App />
+    <TonConnectUIProvider manifestUrl={manifestUrl}>
+      <App />
+    </TonConnectUIProvider>
   </React.StrictMode>
 );

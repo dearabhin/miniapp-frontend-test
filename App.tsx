@@ -1,5 +1,8 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import type { TelegramWebApp } from './types';
+import { TonConnectButton, useTonConnectUI, useTonWallet } from '@tonconnect/ui-react';
+import { Sender, SenderArguments, Address, toNano } from '@ton/ton';
 
 // Declare the Telegram WebApp object from the global window scope
 declare global {
@@ -11,7 +14,32 @@ declare global {
 }
 
 // IMPORTANT: Replace this with your actual backend URL from Render.com
-const BACKEND_URL = 'https://miniapp-backend-test.onrender.com/upload-url';
+const BACKEND_URL = 'https://miniapp-frontend-test.pages.dev/upload-url';
+
+// Custom hook to wrap the TON Connect sender
+function useTonConnect(): { sender: Sender; connected: boolean } {
+  const [tonConnectUI] = useTonConnectUI();
+  const wallet = useTonWallet();
+
+  return {
+    sender: {
+      send: async (args: SenderArguments) => {
+        tonConnectUI.sendTransaction({
+          messages: [
+            {
+              address: args.to.toString(),
+              amount: args.value.toString(),
+              payload: args.body?.toBoc().toString('base64'),
+            },
+          ],
+          validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve
+        });
+      },
+      address: wallet?.account.address ? Address.parse(wallet?.account.address) : undefined
+    },
+    connected: !!wallet?.account.address,
+  };
+}
 
 const App: React.FC = () => {
   const [url, setUrl] = useState<string>('');
@@ -19,6 +47,8 @@ const App: React.FC = () => {
 
   // Safely get the Telegram WebApp object. It will be undefined if not running in a Telegram client.
   const tg = useMemo(() => window.Telegram?.WebApp, []);
+
+  const { sender, connected } = useTonConnect();
 
   // Regular expression for basic URL validation
   const isValidUrl = (urlString: string): boolean => {
@@ -131,7 +161,10 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-start min-h-screen p-4" style={{ backgroundColor: 'var(--tg-theme-bg-color)', color: 'var(--tg-theme-text-color)' }}>
       <div className="w-full max-w-md mt-8">
-        <header className="text-center mb-6">
+        <header className="text-center mb-6 relative">
+             <div className="absolute top-0 right-0">
+                <TonConnectButton />
+            </div>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-3" viewBox="0 0 24 24" fill="currentColor" style={{color: 'var(--tg-theme-button-color)'}}>
                 <path d="M13.467 2.333a1.2 1.2 0 00-1.628-.76l-9 5a1.2 1.2 0 00-.506 1.838l9 15a1.2 1.2 0 002.134-.761l2-16a1.2 1.2 0 00-1.001-1.317zM3.4 7.64l8.1-4.5 1.428 11.428-9.528-6.928z" />
                 <path d="M19.667 2.033a1.2 1.2 0 00-1.4.267l-7.5 10a1.2 1.2 0 00.933 1.9h9a1.2 1.2 0 001.2-1.2v-9a1.2 1.2 0 00-2.4-.967zM12.7 12.6l6.6-8.8v7.6h-6.6z" />
@@ -167,11 +200,35 @@ const App: React.FC = () => {
           {error && (
             <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
           )}
+
+          {connected && (
+             <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--tg-theme-hint-color)'}}>
+                <h2 className="text-lg font-semibold text-center mb-4" style={{ color: 'var(--tg-theme-text-color)' }}>TON Actions</h2>
+                <div className="flex justify-center">
+                    <button
+                        onClick={() => sender.send({
+                            to: Address.parse('EQA4s5DP3oWpW_2L-1aIeps8rGa43f9mTpACRvVltcCk4FfR'), // Testnet Wallet 2
+                            value: toNano('0.01'),
+                        })}
+                        className="px-6 py-2 rounded-lg font-bold transition-colors"
+                        style={{
+                            backgroundColor: 'var(--tg-theme-button-color, #36a3f7)',
+                            color: 'var(--tg-theme-button-text-color, #ffffff)'
+                        }}
+                    >
+                        Send 0.01 TON
+                    </button>
+                </div>
+                <p className="text-xs text-center mt-2" style={{ color: 'var(--tg-theme-hint-color)' }}>
+                    This will send a test transaction on the TON testnet.
+                </p>
+            </div>
+          )}
         </main>
       </div>
        <footer className="w-full text-center p-4 mt-auto">
         <p className="text-xs" style={{ color: 'var(--tg-theme-hint-color)' }}>
-            Powered by Telegram Mini Apps
+            Powered by Telegram Mini Apps & TON
         </p>
       </footer>
     </div>
